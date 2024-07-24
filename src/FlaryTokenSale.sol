@@ -40,7 +40,12 @@ contract FlaryTokenSale is Ownable, Pausable, ReentrancyGuard {
         uint8 usdtDecimals = s_usdt.decimals();
 
         // assuming token's decimals 18
-        uint256 tokensAmount = msg.value * uint256(nativePrice) / (i_tokensPriceInUsdt * 10 ** (feedDecimals - usdtDecimals));
+        uint256 tokensAmount;
+        if (feedDecimals > usdtDecimals) {
+            tokensAmount = msg.value * uint256(nativePrice) / (i_tokensPriceInUsdt * 10 ** (feedDecimals - usdtDecimals));
+        } else {
+            tokensAmount = msg.value * uint256(nativePrice) * 10 ** (usdtDecimals - feedDecimals) / i_tokensPriceInUsdt;
+        }
         
         s_investemetByAddress[msg.sender] += tokensAmount;
         s_tokenSold += tokensAmount;
