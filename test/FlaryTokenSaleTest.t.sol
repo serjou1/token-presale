@@ -16,8 +16,6 @@ contract FlaryTokenSaleTest is Test{
     ERC20 usdt;
     uint256 tokenPriceInUsdt;
 
-    address USER = makeAddr("user");
-
     function setUp() external {
         HelperConfig config = new HelperConfig();
         (, address usdtAddress, uint256 _tokenPriceInUsdt) = config.activeConfig();
@@ -47,18 +45,27 @@ contract FlaryTokenSaleTest is Test{
     function testBuyTokensWithUsdt() public {
         uint256 usdtAmount = 4 * (10 ** usdt.decimals());
 
-        vm.prank(USER);
+        address reachUser = getReachUser();
+
+        vm.startPrank(reachUser);
+        usdt.approve(address(flary), usdtAmount);
         flary.buyTokensUSDT(usdtAmount);
+        vm.stopPrank();
 
         uint256 expectedTokensAmount = usdtAmount * 10 ** 18 / tokenPriceInUsdt;
 
-        assertEq(expectedTokensAmount, flary.s_investemetByAddress(address(this)));
+        assertEq(expectedTokensAmount, flary.s_investemetByAddress(reachUser));
     }
 
     function getReachUser() private view returns (address) {
         if (block.chainid == 1) {
             return 0xF977814e90dA44bFA03b6295A0616a897441aceC;
         }
-        if (block.chainid == )
+        if (block.chainid == 56) {
+            return 0x494D88E1d28Ff7224079B73C0d0753810d2827c5;
+        }
+        if (block.chainid == 11155111) {
+            return 0x4d02aF17A29cdA77416A1F60Eae9092BB6d9c026;
+        }
     }
 }
