@@ -79,4 +79,8 @@ contract FlaryTokenSale is Ownable, Pausable, ReentrancyGuard {
         (bool hs, ) = payable(owner()).call{value: _amount}("");
         require(hs, "EnergiWanBridge:: Failed to withdraw native coins");
     }
+
+    function changePrice(uint256 _tokensPriceInUsdt) external onlyOwner {
+        i_tokensPriceInUsdt = _tokensPriceInUsdt;
+    }
 }
